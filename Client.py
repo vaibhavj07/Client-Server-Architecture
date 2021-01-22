@@ -11,19 +11,23 @@ ADDR = (SERVER, PORT)
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(ADDR)
 
-def send(msg):
-    message = msg.encode(FORMAT)
-    msg_length = len(message)
-    send_length = str(msg_length).encode(FORMAT)
-    send_length += b' ' * (HEADER - len(send_length))
-    client.send(send_length)
-    client.send(message)
-    print(client.recv(2048).decode(FORMAT))
+response = client.recv(2048)
 
-send("Hello World!")
-input()
-send("Hello Everyone!")
-input()
-send("Hello Tim!")
+name = input(response.decode())	
+client.send(str.encode(name))
+response = client.recv(2048)
+# Input Password
+password = input(response.decode())	
+client.send(str.encode(password))
+''' Response : Status of Connection :
+	1 : Registeration successful 
+	2 : Connection Successful
+	3 : Login Failed
+'''
+# Receive response 
+response = client.recv(2048)
+response = response.decode()
+print(response)
 
-send(DISCONNECT_MESSAGE)
+
+
