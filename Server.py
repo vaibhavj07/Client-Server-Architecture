@@ -24,19 +24,27 @@ def handle_client(conn, addr):
     name = name.decode()
     if name ==  ADMINU and password == PASSU:
         connected = True
-        conn.send(str.encode("Login Successful: "))
-        print("Login Successful")
-        
-        '''while connected:
-            msg_length = conn.recv(HEADER).decode(FORMAT)
-            if msg_length:
-                msg_length = int(msg_length)
-                msg = conn.recv(msg_length).decode(FORMAT)
-                if msg == DISCONNECT_MESSAGE:
-                    connected = False'''
-
-
+        conn.send(str.encode('Login Successful: \nOptions:\na. Download File\nb. Access Employee Directory\nc. Access Log Files\nd. Log Out: '))
+        option_selected = conn.recv(2048)
+        option_selected = option_selected.decode() 
+        if (option_selected == "a"):
+            print("1")
+        elif (option_selected == "b"):
+            print("2")
+        elif (option_selected == "c"):
+            print("3")
+        elif(option_selected == "d"):
+            print("Log out")
     conn.close()
+                
+    '''while connected:
+                msg_length = conn.recv(HEADER).decode(FORMAT)
+                if msg_length:
+                    msg_length = int(msg_length)
+                    msg = conn.recv(msg_length).decode(FORMAT)
+                    if msg == DISCONNECT_MESSAGE:
+                        connected = False '''      
+
         
 
 def start():

@@ -26,8 +26,9 @@ client.send(str.encode(password))
 '''
 # Receive response 
 response = client.recv(2048)
-response = response.decode()
-print(response)
+option = input(response.decode())
+client.send(str.encode(option))
+
 
 
 
