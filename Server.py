@@ -28,14 +28,15 @@ def handle_client(conn, addr):
         option_selected = conn.recv(2048)
         option_selected = option_selected.decode() 
         if (option_selected == "a"):
-            print("1")
+            transfer_file(conn, addr)
         elif (option_selected == "b"):
             print("2")
         elif (option_selected == "c"):
             print("3")
         elif(option_selected == "d"):
             print("Log out")
-    conn.close()
+    else:
+        conn.close()
                 
     '''while connected:
                 msg_length = conn.recv(HEADER).decode(FORMAT)
@@ -45,7 +46,43 @@ def handle_client(conn, addr):
                     if msg == DISCONNECT_MESSAGE:
                         connected = False '''      
 
+def transfer_file(conn, addr):
+    conn.send(str.encode('Select the file download: \nOptions:\na. SOP1\nb. SOP2\nc. SOP3: '))
+    file_selected = conn.recv(2048)
+    file_Selected = file_selected.decode()
+    if(file_Selected == "a"):
+        file = open("SOP1.txt", "r")
+        data = file.read(2048)
+        conn.send("SOP1.txt".encode(FORMAT))
+        msg = conn.recv(2048).decode()
+        print(msg)
+        conn.send(data.encode(FORMAT))
+        msg = conn.recv(2048).decode()
+        print(msg)
+        file.close()
+    elif(file_Selected == "b"):
+        file = open("SOP2.txt", "r")
+        data = file.read(2048)
+        conn.send("SOP2.txt".encode(FORMAT))
+        msg = conn.recv(2048).decode()
+        print(msg)
+        conn.send(data.encode(FORMAT))
+        msg = conn.recv(2048).decode()
+        print(msg)
+        file.close()
+    elif(file_Selected == "a"):
+        file = open("SOP3.txt", "r")
+        data = file.read(2048)
+        conn.send("SOP3.txt".encode(FORMAT))
+        msg = conn.recv(2048).decode()
+        print(msg)
+        conn.send(data.encode(FORMAT))
+        msg = conn.recv(2048).decode()
+        print(msg)
+        file.close()
         
+        
+
 
 def start():
     server.listen()

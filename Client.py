@@ -24,10 +24,31 @@ client.send(str.encode(password))
 	2 : Connection Successful
 	3 : Login Failed
 '''
+
+# selecting file
+def Download_files():
+    response = client.recv(2048)
+    option = input(response.decode())
+    client.send(str.encode(option))
+    filename = client.recv(2048).decode(FORMAT)
+    print(filename)
+    file = open(filename,"w")
+    client.send(str.encode("FileName Received"))
+    data = client.recv(2048).decode(FORMAT)
+    print("File Data recived")
+    file.write(data)
+    client.send("File Data received".encode(FORMAT))
+    file.close()
+    
 # Receive response 
 response = client.recv(2048)
 option = input(response.decode())
 client.send(str.encode(option))
+if option == "a":
+    Download_files()
+
+
+                
 
 
 
