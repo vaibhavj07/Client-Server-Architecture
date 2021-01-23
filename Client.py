@@ -1,5 +1,6 @@
 import socket
 
+
 HEADER = 1024
 PORT = input("Enter the port number you want to connect: ")
 PORT = int(PORT)
@@ -25,27 +26,47 @@ client.send(str.encode(password))
 	3 : Login Failed
 '''
 
-# selecting file
+
+# Accessing Employee Info
+def Employee_Info():
+    response = client.recv(2048)
+    option = input(response.decode())
+    client.send(str.encode(option))
+
+
+
+
+
+# downloading file
 def Download_files():
     response = client.recv(2048)
     option = input(response.decode())
     client.send(str.encode(option))
-    filename = client.recv(2048).decode(FORMAT)
+    filename = client.recv(2048).decode()
     print(filename)
     file = open(filename,"w")
     client.send(str.encode("FileName Received"))
-    data = client.recv(2048).decode(FORMAT)
+    data = client.recv(2048).decode()
     print("File Data recived")
     file.write(data)
-    client.send("File Data received".encode(FORMAT))
+    client.send(str.encode("File Data received"))
     file.close()
     
-# Receive response 
-response = client.recv(2048)
-option = input(response.decode())
-client.send(str.encode(option))
-if option == "a":
-    Download_files()
+# Receive response
+
+while True:
+    response = client.recv(2048)
+    option = input(response.decode())
+    client.send(str.encode(option))
+    if option == "a":
+        Download_files()
+    elif option =="b":
+         Employee_Info()       
+    elif option == "d":
+        print("Logged Out Successfully")
+        client.close()
+        break
+
 
 
                 

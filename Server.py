@@ -1,5 +1,7 @@
 import socket 
 import threading
+import time
+
 
 HEADER = 1024
 PORT = input("Enter the Port number: ")
@@ -9,10 +11,15 @@ ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
 ADMINU = "ADMIN"
-PASSU = "APASS"
-
+PASSU = "PASSA"
+NORMALU = "NORMAL"
+PASSN = "PASSN"
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
+EMPLOYEE_NAME = ["ADITYA","ARAVINDAN","BRANDOM", "VAIBHAV"]
+EMPLOYEE_PhoneNumber = ["9876543271","4738493849", "6574839203", "54637284938"]
+Employee_Id = ["12345", "87463", "64382", "98437"]
+ 
 
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
@@ -24,27 +31,39 @@ def handle_client(conn, addr):
     name = name.decode()
     if name ==  ADMINU and password == PASSU:
         connected = True
-        conn.send(str.encode('Login Successful: \nOptions:\na. Download File\nb. Access Employee Directory\nc. Access Log Files\nd. Log Out: '))
-        option_selected = conn.recv(2048)
-        option_selected = option_selected.decode() 
-        if (option_selected == "a"):
-            transfer_file(conn, addr)
-        elif (option_selected == "b"):
-            print("2")
-        elif (option_selected == "c"):
-            print("3")
-        elif(option_selected == "d"):
-            print("Log out")
+        while connected:
+            conn.send(str.encode('Login Successful:ADMIN ACCESS \nOptions:\na. Download File\nb. Access Employee Info\nc. Access Log Files\nd. Log Out: '))
+            option_selected = conn.recv(2048)
+            option_selected = option_selected.decode()
+            if (option_selected == "a"):
+                transfer_file(conn, addr)
+            elif (option_selected == "b"):
+                Access_Employee_Info(conn, addr)
+            elif (option_selected == "c"):
+                print("3")
+            elif(option_selected == "d"):
+                connected = False
+                print("Log out")
+                conn.close()       
+    elif name == NORMALU and password == PASSN:
+        connected = True
+        while connected:
+            conn.send(str.encode('Login Successful:NORMAL ACCESS \nOptions:\na. Download File\nb. Access Employee Info\nc. Log Out: '))
+            option_selected = conn.recv(2048)
+            option_selected = option_selected.decode()
+            if (option_selected == "a"):
+                transfer_file(conn, addr)
+            elif (option_selected == "b"):
+                print("2")
+            elif(option_selected == "c"):
+                connected = False
+                print("Log out")
+                conn.close()       
     else:
+        conn.send(str.encode("INVALID CREDENTIALS... CONNECTION CLOSED"))
+        print("UNAUTHORIZED ACCESS..CONNECTION CLOSED")
         conn.close()
-                
-    '''while connected:
-                msg_length = conn.recv(HEADER).decode(FORMAT)
-                if msg_length:
-                    msg_length = int(msg_length)
-                    msg = conn.recv(msg_length).decode(FORMAT)
-                    if msg == DISCONNECT_MESSAGE:
-                        connected = False '''      
+                    
 
 def transfer_file(conn, addr):
     conn.send(str.encode('Select the file download: \nOptions:\na. SOP1\nb. SOP2\nc. SOP3: '))
@@ -53,37 +72,56 @@ def transfer_file(conn, addr):
     if(file_Selected == "a"):
         file = open("SOP1.txt", "r")
         data = file.read(2048)
-        conn.send("SOP1.txt".encode(FORMAT))
+        conn.send(str.encode("SOP1.txt"))
         msg = conn.recv(2048).decode()
         print(msg)
-        conn.send(data.encode(FORMAT))
+        conn.send(str.encode(data))
         msg = conn.recv(2048).decode()
         print(msg)
         file.close()
+        pass
     elif(file_Selected == "b"):
         file = open("SOP2.txt", "r")
         data = file.read(2048)
-        conn.send("SOP2.txt".encode(FORMAT))
+        conn.send(str.encode("SOP2.txt"))
         msg = conn.recv(2048).decode()
         print(msg)
-        conn.send(data.encode(FORMAT))
+        conn.send(str.encode(data))
         msg = conn.recv(2048).decode()
         print(msg)
         file.close()
-    elif(file_Selected == "a"):
+        pass
+    elif(file_Selected == "c"):
         file = open("SOP3.txt", "r")
         data = file.read(2048)
-        conn.send("SOP3.txt".encode(FORMAT))
+        conn.send(str.encode("SOP3.txt"))
         msg = conn.recv(2048).decode()
         print(msg)
-        conn.send(data.encode(FORMAT))
+        conn.send(str.encode(data))
         msg = conn.recv(2048).decode()
         print(msg)
         file.close()
-        
-        
+        pass
+    else:
+        conn.send(str.encode("Invalid Option"))
+        conn.close()
+        pass
+
+def Access_Employee_Info(conn, addr):
+    conn.send(str.encode('Enter the Employee Name: '))
+    name_selected = conn.recv(2048)
+    name_selected = name_selected.decode()
+    name_selected = name_selected.upper()
+    index = EMPLOYEE_NAME.index(name_selected)
+    PhoneNumber = EMPLOYEE_PhoneNumber[index]
+    EmpId = Employee_Id[index]
+    Info = "Name: " +  name_selected +"\n" +  "EmpId: " + EmpId + "\n" + "Phone Number: " + PhoneNumber
+    conn.send(str.encode(Info))
+    print("Employee Info Sent")
 
 
+        
+        
 def start():
     server.listen()
     print(f"[LISTENING] Server is listening on {SERVER}")
