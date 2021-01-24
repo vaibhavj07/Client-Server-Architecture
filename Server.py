@@ -16,6 +16,9 @@ NORMALU = "NORMAL"
 PASSN = "PASSN"
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
+global EMPLOYEE_NAME
+global EMPLOYEE_PhoneNumber
+global Employee_Id
 EMPLOYEE_NAME = ["ADITYA","ARAVINDAN","BRANDOM", "VAIBHAV"]
 EMPLOYEE_PhoneNumber = ["9876543271","4738493849", "6574839203", "54637284938"]
 Employee_Id = ["12345", "87463", "64382", "98437"]
@@ -23,6 +26,11 @@ Employee_Id = ["12345", "87463", "64382", "98437"]
 
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
+    named_tuple = time.localtime() # get struct_time
+    Time = time.strftime("%m/%d/%Y, %H:%M:%S", named_tuple)
+    f = open("Logs.txt","a")
+    f.write("[NEW CONNECTION] " + str(addr) + "connected at " + str(Time) + "\n")
+    f.close()
     conn.send(str.encode('ENTER USERNAME : ')) # Request Username
     name = conn.recv(2048)
     conn.send(str.encode('ENTER PASSWORD : ')) # Request Password
@@ -32,7 +40,7 @@ def handle_client(conn, addr):
     if name ==  ADMINU and password == PASSU:
         connected = True
         while connected:
-            conn.send(str.encode('Login Successful:ADMIN ACCESS \nOptions:\na. Download File\nb. Access Employee Info\nc. Access Log Files\nd. Log Out: '))
+            conn.send(str.encode('Login Successful:ADMIN ACCESS \nOptions:\na. Download File\nb. Access Employee Info\nc. Add Employee \nd. Access Logs \ne. Log Out:  '))
             option_selected = conn.recv(2048)
             option_selected = option_selected.decode()
             if (option_selected == "a"):
@@ -40,8 +48,10 @@ def handle_client(conn, addr):
             elif (option_selected == "b"):
                 Access_Employee_Info(conn, addr)
             elif (option_selected == "c"):
-                print("3")
+                Add_Employee(conn, addr)
             elif(option_selected == "d"):
+                Access_Logs(conn, addr)
+            elif(option_selected == "e"):
                 connected = False
                 print("Log out")
                 conn.close()       
@@ -54,7 +64,7 @@ def handle_client(conn, addr):
             if (option_selected == "a"):
                 transfer_file(conn, addr)
             elif (option_selected == "b"):
-                print("2")
+                Access_Employee_Info(conn, addr)
             elif(option_selected == "c"):
                 connected = False
                 print("Log out")
@@ -119,6 +129,25 @@ def Access_Employee_Info(conn, addr):
     conn.send(str.encode(Info))
     print("Employee Info Sent")
 
+def Add_Employee(conn, addr):
+    conn.send(str.encode('Enter Employee Name'))
+    name = conn.recv(2048)
+    name = name.decode()
+    name = name.upper()
+    EMPLOYEE_NAME.append(name)
+    print("Employee Name Added")
+    print(EMPLOYEE_NAME)
+    
+def Access_Logs(conn, addr):
+    file = open("Logs.txt","r")
+    data = file.read(2048)
+    conn.send(str.encode("Logs.txt"))
+    msg = conn.recv(2048).decode()
+    print(msg)
+    conn.send(str.encode(data))
+    msg = conn.recv(2048).decode()
+    print(msg)
+    file.close()
 
         
         

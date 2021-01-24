@@ -34,7 +34,11 @@ def Employee_Info():
     client.send(str.encode(option))
 
 
-
+#Add Employee
+def Add_Employee():
+    response = client.recv(2048)
+    option = input(response.decode())
+    client.send(str.encode(option))
 
 
 # downloading file
@@ -42,6 +46,18 @@ def Download_files():
     response = client.recv(2048)
     option = input(response.decode())
     client.send(str.encode(option))
+    filename = client.recv(2048).decode()
+    print(filename)
+    file = open(filename,"w")
+    client.send(str.encode("FileName Received"))
+    data = client.recv(2048).decode()
+    print("File Data recived")
+    file.write(data)
+    client.send(str.encode("File Data received"))
+    file.close()
+
+#Access Logs
+def Access_Logs():
     filename = client.recv(2048).decode()
     print(filename)
     file = open(filename,"w")
@@ -61,8 +77,12 @@ while True:
     if option == "a":
         Download_files()
     elif option =="b":
-         Employee_Info()       
-    elif option == "d":
+         Employee_Info()
+    elif option =="c":
+        Add_Employee()
+    elif option =="d":
+        Access_Logs()
+    elif option == "e":
         print("Logged Out Successfully")
         client.close()
         break
