@@ -21,11 +21,6 @@ response = client.recv(2048)
 # Input Password
 password = input(response.decode())	
 client.send(str.encode(password))
-''' Response : Status of Connection :
-	1 : Registeration successful 
-	2 : Connection Successful
-	3 : Login Failed
-'''
 
 
 # Accessing Employee Info
