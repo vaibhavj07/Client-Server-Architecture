@@ -3,12 +3,11 @@ import threading
 import time
 
 
-HEADER = 1024
+
 PORT = input("Enter the Port number: ")
 PORT = int(PORT)
 SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
-FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
 ADMINU = "ADMIN"
 PASSU = "PASSA"
@@ -40,25 +39,23 @@ def handle_client(conn, addr):
     if name ==  ADMINU and password == PASSU:
         connected = True
         while connected:
-            conn.send(str.encode('Login Successful:ADMIN ACCESS \nOptions:\na. Download File\nb. Access Employee Info\nc. Add Employee \nd. Access Logs \ne. Log Out:  '))
+            conn.send(str.encode('Login Successful:ADMIN ACCESS\n --------------------------------------------------- \nOptions:\na. Download File\nb. Access Employee Info\nc. Access Logs \nd. Log Out:  '))
             option_selected = conn.recv(2048)
             option_selected = option_selected.decode()
             if (option_selected == "a"):
                 transfer_file(conn, addr)
             elif (option_selected == "b"):
                 Access_Employee_Info(conn, addr)
-            elif (option_selected == "c"):
-                Add_Employee(conn, addr)
-            elif(option_selected == "d"):
+            elif(option_selected == "c"):
                 Access_Logs(conn, addr)
-            elif(option_selected == "e"):
+            elif(option_selected == "d"):
                 connected = False
                 print("Log out")
                 conn.close()       
     elif name == NORMALU and password == PASSN:
         connected = True
         while connected:
-            conn.send(str.encode('Login Successful:NORMAL ACCESS \nOptions:\na. Download File\nb. Access Employee Info\nc. Log Out: '))
+            conn.send(str.encode('Login Successful:NORMAL ACCESS\n --------------------------------------------------- \nOptions:\na. Download File\nb. Access Employee Info\nc. Log Out: '))
             option_selected = conn.recv(2048)
             option_selected = option_selected.decode()
             if (option_selected == "a"):
@@ -129,14 +126,16 @@ def Access_Employee_Info(conn, addr):
     conn.send(str.encode(Info))
     print("Employee Info Sent")
 
-def Add_Employee(conn, addr):
+
+'''def Add_Employee(conn, addr):
     conn.send(str.encode('Enter Employee Name'))
     name = conn.recv(2048)
     name = name.decode()
     name = name.upper()
     EMPLOYEE_NAME.append(name)
     print("Employee Name Added")
-    print(EMPLOYEE_NAME)
+    print(EMPLOYEE_NAME)'''
+
     
 def Access_Logs(conn, addr):
     file = open("Logs.txt","r")

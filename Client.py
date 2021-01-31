@@ -6,7 +6,8 @@ PORT = input("Enter the port number you want to connect: ")
 PORT = int(PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
-SERVER = "192.168.29.48"
+#SERVER = "192.168.29.48"
+SERVER = socket.gethostname()
 ADDR = (SERVER, PORT)
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -69,23 +70,38 @@ def Access_Logs():
     file.close()
     
 # Receive response
-
+admin_access = False
 while True:
     response = client.recv(2048)
-    option = input(response.decode())
+    decoded_response = response.decode()
+    if ('ADMIN ACCESS' in decoded_response):
+        admin_access = True
+    elif('NOMRAL ACCESS' in decoded_response):
+        admin_access = False
+    option = input(decoded_response)
     client.send(str.encode(option))
-    if option == "a":
-        Download_files()
-    elif option =="b":
-         Employee_Info()
-    elif option =="c":
-        Add_Employee()
-    elif option =="d":
-        Access_Logs()
-    elif option == "e":
-        print("Logged Out Successfully")
-        client.close()
-        break
+    if admin_access == True:
+        if option == "a":
+            Download_files()
+        elif option =="b":
+             Employee_Info()
+        elif option =="c":
+            Access_Logs()
+        elif option == "d":
+            print("Logged Out Successfully")
+            client.close()
+            admin_access = False
+            break
+    else:
+        if option == "a":
+            Download_files()
+        elif option =="b":
+             Employee_Info()
+        elif option == "c":
+            print("Logged Out Successfully")
+            client.close()
+            admin_access = False
+            break
 
 
 
